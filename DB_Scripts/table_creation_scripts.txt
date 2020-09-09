@@ -1,0 +1,50 @@
+-- Table: public.category
+
+-- DROP TABLE public.category;
+
+CREATE TABLE public.category
+(
+    id integer NOT NULL DEFAULT nextval('category_id_seq'::regclass),
+    name character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    tax_rate numeric(4,2) NOT NULL,
+    description character varying(200) COLLATE pg_catalog."default",
+    CONSTRAINT category_pkey PRIMARY KEY (id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.category
+    OWNER to postgres;
+
+*********************************
+
+-- Table: public.item
+
+-- DROP TABLE public.item;
+
+CREATE TABLE public.item
+(
+    id integer NOT NULL DEFAULT nextval('item_id_seq'::regclass),
+    name character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    price numeric(10,2),
+    category_id integer NOT NULL,
+    CONSTRAINT item_pkey PRIMARY KEY (id),
+    CONSTRAINT category FOREIGN KEY (category_id)
+        REFERENCES public.category (id) MATCH SIMPLE
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+        NOT VALID
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE public.item
+    OWNER to postgres;
+-- Index: fki_category
+
+-- DROP INDEX public.fki_category;
+
+CREATE INDEX fki_category
+    ON public.item USING btree
+    (category_id ASC NULLS LAST)
+    TABLESPACE pg_default;
